@@ -3,12 +3,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
    Name = "Forsaken Emote Hub",
    LoadingTitle = "By Ex0rdum",
-   LoadingSubtitle = "worst hub ever",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "Forsaken Emote Hub"
-   }
+   LoadingSubtitle = "worst hub ever"
 })
 
 local EmotesTab = Window:CreateTab("Emotes", "person-standing")
