@@ -19,9 +19,30 @@ local GeneratorTab = Window:CreateTab("Generator", "dock")
 local VisualsTab = Window:CreateTab("Visuals", "eye")
 local LocalTab = Window:CreateTab("Local", "user")
 
+local InfStamToggle = LocalTab:CreateToggle({ 
+      Name = "Inf Stamina",
+      CurrentValue = false,
+      Callback = function(state)
+         stam = state
+        local stamscript = require(game.ReplicatedStorage.Systems.Character.Game.Sprinting)
+        local connection
+        connection = game:GetService("RunService").Heartbeat:Connect(function()
+            if not stam then
+                connection:Disconnect()
+                stamscript.StaminaLossDisabled = nil
+                return
+            end
+            stamscript.StaminaLossDisabled = function() 
+            end
+        end)
+      end,
+})
+
+local Divider = LocalTab:CreateDivider()
+
 local GravitySlider = LocalTab:CreateSlider({
    Name = "Gravity",
-   Range = {0, 600},
+   Range = {1, 300},
    Increment = 1,
    CurrentValue = 196,
    Callback = function(Value)
@@ -29,37 +50,85 @@ local GravitySlider = LocalTab:CreateSlider({
    end,
 })
 
-local WalkspeedSlider = LocalTab:CreateSlider({
-   Name = "Walkspeed",
-   Range = {0, 200},
-   Increment = 1,
-   CurrentValue = 16,
+local Divider = LocalTab:CreateDivider()
+
+local Walkspeed = 1
+local WSSlider = LocalTab:CreateSlider({
+   Name = "Walkspeed Multiplier",
+   Range = {1, 10},
+   Increment = 0.1,
+   CurrentValue = Walkspeed,
    Callback = function(Value)
-      local player = game.Players.LocalPlayer
-      local humanoid = player.Character:WaitForChild("Humanoid")
-      spawn(function()
-         while true do
-            humanoid.WalkSpeed = Value
-            wait()
-         end
-      end)
+       Walkspeed = Value
+       local char = game.Players.LocalPlayer.Character
+       if char and char:FindFirstChild("SpeedMultipliers") then
+           char.SpeedMultipliers.Sprinting.Value = Value
+       end
    end,
 })
 
-local JumpPowerSlider = LocalTab:CreateSlider({
-   Name = "JumpPower",
-   Range = {0, 500},
-   Increment = 1,
-   CurrentValue = 50,
+local KeepWS = false
+local LWSToggle = LocalTab:CreateToggle({
+   Name = "Loop Walkspeed",
+   CurrentValue = false,
+   Flag = "LWSToggle",
    Callback = function(Value)
-      local player = game.Players.LocalPlayer
-      local humanoid = player.Character:WaitForChild("Humanoid")
-      spawn(function()
-         while true do
+       KeepWS = Value
+       if KeepWS then
+           task.spawn(function()
+               while KeepWS do
+                   local char = game.Players.LocalPlayer.Character
+                   if char and char:FindFirstChild("SpeedMultipliers") then
+                       if char.SpeedMultipliers.Sprinting.Value ~= Walkspeed then
+                           char.SpeedMultipliers.Sprinting.Value = Walkspeed
+                       end
+                   end
+                   task.wait()
+               end
+           end)
+       end
+   end,
+})
+
+local Divider = LocalTab:CreateDivider()
+
+local JumpPower = 50
+local JPSlider = LocalTab:CreateSlider({
+   Name = "JumpPower",
+   Range = {1, 500},
+   Increment = 1,
+   CurrentValue = JumpPower,
+   Callback = function(Value)
+       JumpPower = Value
+       local humanoid = game.Players.LocalPlayer.Character.Humanoid
+       if humanoid then
+            humanoid.UseJumpPower = true
             humanoid.JumpPower = Value
-            wait()
-         end
-      end)
+       end
+   end,
+})
+
+local KeepJP = false
+local LJPToggle = LocalTab:CreateToggle({
+   Name = "Loop JumpPower",
+   CurrentValue = false,
+   Flag = "LJPToggle",
+   Callback = function(Value)
+       KeepJP = Value
+       if KeepJP then
+           task.spawn(function()
+               while KeepJP do
+                   local humanoid = game.Players.LocalPlayer.Character.Humanoid
+                   if humanoid then
+                        humanoid.UseJumpPower = true
+                       if humanoid and humanoid.JumpPower ~= JumpPower then
+                           humanoid.JumpPower = JumpPower
+                       end
+                   end
+                   task.wait()
+               end
+           end)
+       end
    end,
 })
 
