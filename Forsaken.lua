@@ -14,7 +14,130 @@ local Window = Rayfield:CreateWindow({
 })
 
 local SurvivorsTab = Window:CreateTab("Survivors", "users")
+
+local shedloop
+local shedaim = false
+local ShedAimbotToggle = SurvivorsTab:CreateToggle({
+      Name = "Shedletsky Aimbot",
+      CurrentValue = false,
+      Flag = "ShedAimbotToggle",
+      Callback = function(state)
+         shedaim = state
+        if game:GetService("Players").LocalPlayer.PlayerData.Equipped.Survivor.Value ~= "Shedletsky" and state then
+            Rayfield:Notify{
+                Title = "Wrong Character",
+                Content = "Your current character isn't Shedletsky, you can still enable this but it might cause bugs, so it's best just to turn it off if you aren't using Shedletsky",
+                Duration = 5
+            }
+            return
+        end
+        if state then
+            shedloop = game.Players.LocalPlayer.Character.Sword.ChildAdded:Connect(function(child)
+                if not shedaim then return end
+                for _, v in pairs(shedaimbotsounds) do
+                    if child.Name == v then
+                        local killersFolder = game.Workspace.Players:FindFirstChild("Killers")
+                        if killersFolder then
+                            local killer = killersFolder:FindFirstChildOfClass("Model")
+                            if killer and killer:FindFirstChild("HumanoidRootPart") then
+                                local killerHRP = killer.HumanoidRootPart
+                                local playerHRP = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                                if playerHRP then
+                                    local num, maxIterations = 1, 100
+                                    while num <= maxIterations do
+                                        task.wait(0.01)
+                                        num = num + 1
+                                        workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, killerHRP.Position)
+                                        playerHRP.CFrame = CFrame.lookAt(playerHRP.Position, killerHRP.Position)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        else
+            if shedloop then
+                shedloop:Disconnect()
+                shedloop = nil
+            end
+        end
+    end,
+})
+
 local KillerTab = Window:CreateTab("Killer", "axe")
+
+local AimLoop1x
+local aimbot1x1 = false
+local Aimbot1x1Toggle = KillerTab:CreateToggle({
+      Name = "1x1x1x1 Aimbot",
+      CurrentValue = false,
+      Flag = "Aimbot1x1Toggle",
+      Callback = function(state)
+        aimbot1x1 = state
+        if game:GetService("Players").LocalPlayer.PlayerData.Equipped.Killer.Value ~= "1x1x1x1" and state then
+            Rayfield:Notify{
+                Title = "Wrong Character",
+                Content = "Your current character isn't 1x1x1x1, you can still enable this but it might cause bugs, so it's best just to turn it off if you aren't using 1x1x1x1",
+                Duration = 5
+            }
+            return
+        end
+        if state then
+            AimLoop1x = game.Players.LocalPlayer.Character.HumanoidRootPart.ChildAdded:Connect(function(child)
+                if not aimbot1x1 then return end
+                for _, v in pairs(aimbot1x1sounds) do
+                    if child.Name == v then
+                        local survivors = {}
+                        for _, player in pairs(game.Players:GetPlayers()) do
+                            if player ~= game.Players.LocalPlayer then
+                                local character = player.Character
+                                if character and character:FindFirstChild("HumanoidRootPart") then
+                                    table.insert(survivors, character)
+                                end
+                            end
+                        end
+                        local nearestSurvivor, shortestDistance = nil, math.huge  
+                        for _, survivor in pairs(survivors) do
+                            local survivorHRP = survivor.HumanoidRootPart
+                            local playerHRP = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                            if playerHRP then
+                                local distance = (survivorHRP.Position - playerHRP.Position).Magnitude
+                                if distance < shortestDistance then
+                                    shortestDistance = distance
+                                    nearestSurvivor = survivor
+                                end
+                            end
+                        end
+                        if nearestSurvivor then
+                            local nearestHRP = nearestSurvivor.HumanoidRootPart
+                            local playerHRP = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                            if playerHRP then
+                                local direction = (nearestHRP.Position - playerHRP.Position).Unit
+                                local num, maxIterations = 1, 100  
+                                if child.Name == "rbxassetid://79782181585087" then
+                                    maxIterations = 220  
+                                end
+                                while num <= maxIterations do
+                                    task.wait(0.01)
+                                    num = num + 1
+                                    workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, nearestHRP.Position)
+                                    playerHRP.CFrame = CFrame.lookAt(playerHRP.Position, nearestHRP.Position)
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        else
+            if AimLoop1x then
+                AimLoop1x:Disconnect()
+                AimLoop1x = nil
+            end
+        end
+    end,
+})
+
 local GeneratorTab = Window:CreateTab("Generator", "dock")
 local VisualsTab = Window:CreateTab("Visuals", "eye")
 local LocalTab = Window:CreateTab("Local", "user")
