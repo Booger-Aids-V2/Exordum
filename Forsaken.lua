@@ -51,13 +51,12 @@ local ShedAimbotToggle = SurvivorsTab:CreateToggle({
                             local killerHRP = killer.HumanoidRootPart
                             local rootpart = character:FindFirstChild("HumanoidRootPart")
                             if rootpart then
-                                local num, maxIterations = 1, 100
-                                while num <= maxIterations do
-                                    task.wait(0.01)
-                                    num = num + 1
-                                    workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, killerHRP.Position)
-                                    rootpart.CFrame = CFrame.lookAt(rootpart.Position, killerHRP.Position)
-                                end
+                              local startTime = tick()
+                              while tick() - startTime < 1 do
+                              task.wait()
+                              workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, killerHRP.Position)
+                              rootpart.CFrame = CFrame.lookAt(rootpart.Position, killerHRP.Position)
+                           end
                             end
                         end
                     end
@@ -80,13 +79,12 @@ game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
                         local killerHRP = killer.HumanoidRootPart
                         local rootpart = character:FindFirstChild("HumanoidRootPart")
                         if rootpart then
-                            local num, maxIterations = 1, 100
-                            while num <= maxIterations do
-                                task.wait(0.01)
-                                num = num + 1
-                                workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, killerHRP.Position)
-                                rootpart.CFrame = CFrame.lookAt(rootpart.Position, killerHRP.Position)
-                            end
+                           local startTime = tick()
+                           while tick() - startTime < 1 do
+                              task.wait()
+                              workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, killerHRP.Position)
+                              rootpart.CFrame = CFrame.lookAt(rootpart.Position, killerHRP.Position)
+                           end
                         end
                     end
                 end
@@ -142,10 +140,9 @@ local Aimbot1x1Toggle = KillerTab:CreateToggle({
                 if nearestSurvivor then
                     local nearestHRP = nearestSurvivor.HumanoidRootPart
                     if rootpart then
-                        local num = 1
-                        while num <= 100 do
-                            task.wait(0.01)
-                            num = num + 1
+                        local startTime = tick()
+                        while tick() - startTime < 1 do
+                            task.wait()
                             workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, nearestHRP.Position)
                             rootpart.CFrame = CFrame.lookAt(rootpart.Position, nearestHRP.Position)
                         end
@@ -182,10 +179,9 @@ game.Players.LocalPlayer.CharacterAdded:Connect(function()
         if nearestSurvivor then
             local nearestHRP = nearestSurvivor.HumanoidRootPart
             if rootpart then
-                local num = 1
-                while num <= 100 do
-                    task.wait(0.01)
-                    num = num + 1
+                local startTime = tick()
+                while tick() - startTime < 1 do
+                    task.wait()
                     workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, nearestHRP.Position)
                     rootpart.CFrame = CFrame.lookAt(rootpart.Position, nearestHRP.Position)
                 end
