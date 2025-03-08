@@ -259,6 +259,309 @@ local GenDelaySlider = GeneratorTab:CreateSlider({
 })
 
 local VisualsTab = Window:CreateTab("Visuals", "eye")
+
+local SurvivorESPToggle = VisualsTab:CreateToggle({
+    Name = "Survivor ESP",
+    CurrentValue = false,
+    Flag = "SurvivorESPToggle",
+    Callback = function(state)
+        for _, model in pairs(game.Workspace.Players.Survivors:GetChildren()) do
+            if model:IsA("Model") and model:FindFirstChild("Head") then
+                local existingBillboard = model.Head:FindFirstChild("Sigma")
+                local existingHighlight = model:FindFirstChild("Sigma2")
+                if state then
+                    if not existingBillboard then
+                        local billboard = Instance.new("BillboardGui")
+                        billboard.Name = "Sigma"
+                        billboard.Size = UDim2.new(0, 100, 0, 50)
+                        billboard.StudsOffset = Vector3.new(0, 2, 0)
+                        billboard.AlwaysOnTop = true
+                        billboard.Parent = model.Head
+                        local textLabel = Instance.new("TextLabel", billboard)
+                        textLabel.Size = UDim2.new(1, 0, 1, 0)
+                        textLabel.Text = model.Name
+                        textLabel.TextColor3 = Color3.new(1, 1, 1)
+                        textLabel.TextStrokeTransparency = 0
+                        textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+                        textLabel.BackgroundTransparency = 1
+                    end
+                    if not existingHighlight then
+                        local highlight = Instance.new("Highlight")
+                        highlight.Name = "Sigma2"
+                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        highlight.FillTransparency = 1
+                        highlight.Parent = model
+                    end
+                else
+                    if existingBillboard then
+                        existingBillboard:Destroy()
+                    end
+                    if existingHighlight then
+                        existingHighlight:Destroy()
+                    end
+                end
+            end
+        end
+        game.Workspace.Players.Survivors.ChildAdded:Connect(function(child)
+            if state and child:IsA("Model") and child:FindFirstChild("Head") then
+                local billboard = Instance.new("BillboardGui")
+                billboard.Name = "Sigma"
+                billboard.Size = UDim2.new(0, 100, 0, 50)
+                billboard.StudsOffset = Vector3.new(0, 2, 0)
+                billboard.AlwaysOnTop = true
+                billboard.Parent = child.Head
+                local textLabel = Instance.new("TextLabel", billboard)
+                textLabel.Size = UDim2.new(1, 0, 1, 0)
+                textLabel.Text = child.Name
+                textLabel.TextColor3 = Color3.new(1, 1, 1)
+                textLabel.TextStrokeTransparency = 0
+                textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+                textLabel.BackgroundTransparency = 1
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "Sigma2"
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                highlight.FillTransparency = 1
+                highlight.Parent = child
+            end
+        end)
+    end,
+})
+
+local ToolsESPToggle = VisualsTab:CreateToggle({
+    Name = "Tools ESP",
+    CurrentValue = false,
+    Flag = "ToolsESPToggle",
+    Callback = function(state)
+        for _, tool in pairs(game.Workspace.Map.Ingame:GetChildren()) do
+            if tool:IsA("Tool") then
+                local existingHighlight = tool:FindFirstChild("Sigma3")
+                local existingBillboard = tool:FindFirstChild("Sigma4")
+                if state then
+                    if not existingHighlight then
+                        local toolHighlight = Instance.new("Highlight")
+                        toolHighlight.Name = "Sigma3"
+                        toolHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        toolHighlight.FillTransparency = 1
+                        toolHighlight.Parent = tool
+                    end
+                    if not existingBillboard then
+                        local billboard = Instance.new("BillboardGui")
+                        billboard.Name = "Sigma4"
+                        billboard.Size = UDim2.new(0, 100, 0, 50)
+                        billboard.StudsOffset = Vector3.new(0, 2, 0)
+                        billboard.AlwaysOnTop = true
+                        billboard.Parent = tool
+                        local textLabel = Instance.new("TextLabel", billboard)
+                        textLabel.Size = UDim2.new(1, 0, 1, 0)
+                        textLabel.Text = tool.Name
+                        textLabel.TextColor3 = Color3.new(1, 1, 1)
+                        textLabel.TextStrokeTransparency = 0
+                        textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+                        textLabel.BackgroundTransparency = 1
+                    end
+                else
+                    if existingHighlight then
+                        existingHighlight:Destroy()
+                    end
+                    if existingBillboard then
+                        existingBillboard:Destroy()
+                    end
+                end
+            end
+        end
+        game.Workspace.Map.Ingame.ChildAdded:Connect(function(child)
+            if state and child:IsA("Tool") then
+                local toolHighlight = Instance.new("Highlight")
+                toolHighlight.Name = "Sigma3"
+                toolHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                toolHighlight.FillTransparency = 1
+                toolHighlight.Parent = child
+                local billboard = Instance.new("BillboardGui")
+                billboard.Name = "Sigma4"
+                billboard.Size = UDim2.new(0, 100, 0, 50)
+                billboard.StudsOffset = Vector3.new(0, 2, 0)
+                billboard.AlwaysOnTop = true
+                billboard.Parent = child
+                local textLabel = Instance.new("TextLabel", billboard)
+                textLabel.Size = UDim2.new(1, 0, 1, 0)
+                textLabel.Text = child.Name
+                textLabel.TextColor3 = Color3.new(1, 1, 1)
+                textLabel.TextStrokeTransparency = 0
+                textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+                textLabel.BackgroundTransparency = 1
+            end
+        end)
+    end
+})
+
+local KillerESPToggle = VisualsTab:CreateToggle({
+    Name = "Killer ESP",
+    CurrentValue = false,
+    Flag = "KillerESPToggle",
+    Callback = function(state)
+        for _, model in pairs(game.Workspace.Players.Killers:GetChildren()) do
+            if model:IsA("Model") and model:FindFirstChild("Head") then
+                local existingHighlight = model:FindFirstChild("Sigma5")
+                local existingBillboard = model.Head:FindFirstChild("Sigma6")
+                if state then
+                    if not existingHighlight then
+                        local highlight = Instance.new("Highlight")
+                        highlight.Name = "Sigma5"
+                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        highlight.FillTransparency = 1
+                        highlight.OutlineColor = Color3.new(1, 0, 0)
+                        highlight.Parent = model
+                    end
+                    if not existingBillboard then
+                        local billboard = Instance.new("BillboardGui")
+                        billboard.Name = "Sigma6"
+                        billboard.Size = UDim2.new(0, 100, 0, 50)
+                        billboard.StudsOffset = Vector3.new(0, 2, 0)
+                        billboard.AlwaysOnTop = true
+                        billboard.Parent = model.Head
+                        local textLabel = Instance.new("TextLabel", billboard)
+                        textLabel.Size = UDim2.new(1, 0, 1, 0)
+                        textLabel.Text = model.Name
+                        textLabel.TextColor3 = Color3.new(1, 0, 0)
+                        textLabel.TextStrokeTransparency = 0
+                        textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+                        textLabel.BackgroundTransparency = 1
+                    end
+                else
+                    if existingHighlight then
+                        existingHighlight:Destroy()
+                    end
+                    if existingBillboard then
+                        existingBillboard:Destroy()
+                    end
+                end
+            end
+        end
+        game.Workspace.Players.Killers.ChildAdded:Connect(function(child)
+            if state and child:IsA("Model") and child:FindFirstChild("Head") then
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "Sigma5"
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                highlight.FillTransparency = 1
+                highlight.OutlineColor = Color3.new(1, 0, 0)
+                highlight.Parent = child
+                local billboard = Instance.new("BillboardGui")
+                billboard.Name = "Sigma6"
+                billboard.Size = UDim2.new(0, 100, 0, 50)
+                billboard.StudsOffset = Vector3.new(0, 2, 0)
+                billboard.AlwaysOnTop = true
+                billboard.Parent = child.Head
+                local textLabel = Instance.new("TextLabel", billboard)
+                textLabel.Size = UDim2.new(1, 0, 1, 0)
+                textLabel.Text = child.Name
+                textLabel.TextColor3 = Color3.new(1, 0, 0)
+                textLabel.TextStrokeTransparency = 0
+                textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+                textLabel.BackgroundTransparency = 1
+            end
+        end)
+    end
+})
+
+local SESection = VisualsTab:CreateSection("Status Effects")
+
+local StatusEffects = game:GetService("ReplicatedStorage").Modules.StatusEffects
+local SubspacedClone = StatusEffects.SurvivorExclusive:FindFirstChild("Subspaced") and StatusEffects.SurvivorExclusive.Subspaced:Clone() 
+local SlownessClone = StatusEffects:FindFirstChild("Slowness") and StatusEffects.Slowness:Clone()
+local BlindnessClone = StatusEffects:FindFirstChild("Blindness") and StatusEffects.Blindness:Clone()
+local HallucinationClone = StatusEffects.KillerExclusive:FindFirstChild("Hallucination") and StatusEffects.KillerExclusive.Hallucination:Clone()
+local GlitchedClone = StatusEffects.KillerExclusive:FindFirstChild("Glitched") and StatusEffects.KillerExclusive.Glitched:Clone()
+
+local AntiSubspacedToggle = VisualsTab:CreateToggle({ 
+    Name = "Anti Subspaced",
+    CurrentValue = false,
+    Flag = "AntiSubspacedToggle",
+    Callback = function(state)
+        if state then
+            local subspaced = StatusEffects.SurvivorExclusive:FindFirstChild("Subspaced") 
+            if subspaced then
+                subspaced:Destroy()
+            end
+        else
+            if not StatusEffects.SurvivorExclusive:FindFirstChild("Subspaced") then 
+                SubspacedClone:Clone().Parent = StatusEffects.SurvivorExclusive
+            end
+        end
+    end,
+})
+
+local AntiSlownessToggle = VisualsTab:CreateToggle({
+    Name = "Anti Slowness",
+    CurrentValue = false,
+    Flag = "AntiSlownessToggle",
+    Callback = function(state)
+        if state then
+            local slowness = StatusEffects:FindFirstChild("Slowness")
+            if slowness then
+                slowness:Destroy()
+            end
+        else
+            if not StatusEffects:FindFirstChild("Slowness") then
+                SlownessClone:Clone().Parent = StatusEffects
+            end
+        end
+    end
+})
+
+local AntiBlindnessToggle = VisualsTab:CreateToggle({
+    Name = "Anti Blindness",
+    CurrentValue = false,
+    Flag = "AntiBlindnessToggle",
+    Callback = function(state)
+        if state then
+            local blindness = StatusEffects:FindFirstChild("Blindness")
+            if blindness then
+                blindness:Destroy()
+            end
+        else
+            if not StatusEffects:FindFirstChild("Blindness") then
+                BlindnessClone:Clone().Parent = StatusEffects
+            end
+        end
+    end
+})
+
+local AntiHallucinationToggle = VisualsTab:CreateToggle({
+    Name = "Anti Hallucination",
+    CurrentValue = false,
+    Flag = "AntiHallucinationToggle",
+    Callback = function(state)
+        if state then
+            local hallucination = StatusEffects.KillerExclusive:FindFirstChild("Hallucination")
+            if hallucination then
+                hallucination:Destroy()
+            end
+        else
+            if not StatusEffects.KillerExclusive:FindFirstChild("Hallucination") then
+                HallucinationClone:Clone().Parent = StatusEffects.KillerExclusive
+            end
+        end
+    end
+})
+
+local AntiGlitchedToggle = VisualsTab:CreateToggle({
+    Name = "Anti Glitched (only removes the screen glitch effect)",
+    CurrentValue = false,
+    Flag = "AntiGlitchedToggle",
+    Callback = function(state)
+        if state then
+            local glitched = StatusEffects.KillerExclusive:FindFirstChild("Glitched")
+            if glitched then
+                glitched:Destroy()
+            end
+        else
+            if not StatusEffects.KillerExclusive:FindFirstChild("Glitched") then
+                GlitchedClone:Clone().Parent = StatusEffects.KillerExclusive
+            end
+        end
+    end
+})
+
 local LocalTab = Window:CreateTab("Local", "user")
 
 local InfStamToggle = LocalTab:CreateToggle({ 
