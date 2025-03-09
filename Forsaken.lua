@@ -194,7 +194,68 @@ local GeneratorTab = Window:CreateTab("Generator", "dock")
 
 local GenSolveDelay = 5
 local debounce = {}
+local genConnections = {}
 local mapFolder
+local AGActive = false
+local GEActive = false
+
+local function CleanGens(gen)
+    if genConnections[gen] then
+        genConnections[gen]:Disconnect()
+        genConnections[gen] = nil
+    end
+    local esp = gen:FindFirstChild("Sigma7")
+    if esp then
+        esp:Destroy()
+    end
+end
+
+local function ApplyGenEsp(gen)
+    if gen.Name ~= "Generator" then return end
+    local function UpdateEsp()
+        local EspExists = gen:FindFirstChild("Sigma7")
+        local progress = gen:FindFirstChild("Progress")
+        if not GEActive or (progress and progress.Value == 100) then
+            if EspExists then
+                EspExists:Destroy()
+            end
+            return
+        end
+        if not EspExists then
+            local GenEsp = Instance.new("Highlight")
+            GenEsp.Parent = gen
+            GenEsp.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            GenEsp.Name = "Sigma7"
+        end
+    end
+    UpdateEsp()
+    local progress = gen:FindFirstChild("Progress")
+    if progress then
+        if genConnections[gen] then
+            genConnections[gen]:Disconnect()
+        end
+        genConnections[gen] = progress:GetPropertyChangedSignal("Value"):Connect(UpdateEsp)
+    end
+end
+
+local function ToggleGenEsp(state)
+    GEActive = state
+    if not mapFolder then return end
+    for _, gen in ipairs(mapFolder:GetChildren()) do
+        CleanGens(gen)
+        if GEActive then
+            ApplyGenEsp(gen)
+        end
+    end
+    mapFolder.ChildAdded:Connect(function(child)
+        if GEActive then
+            ApplyGenEsp(child)
+        end
+    end)
+    mapFolder.ChildRemoved:Connect(function(child)
+        CleanGens(child)
+    end)
+end
 
 local function MapWait()
     local success
@@ -204,15 +265,23 @@ local function MapWait()
     if not success or not mapFolder then
         mapFolder = nil
     end
+
+    if AGActive then
+        AutoGen(true)
+    end
+    if GEActive then
+        ToggleGenEsp(true)
+    end
 end
 
 local function AutoGen(state)
+    AGActive = state
     if not state then
         debounce = {}
         return
     end
     task.spawn(function()
-        while state do
+        while AGActive do
             task.wait()
             if mapFolder then
                 for _, gen in ipairs(mapFolder:GetChildren()) do
@@ -461,6 +530,16 @@ local KillerESPToggle = VisualsTab:CreateToggle({
             end
         end)
     end
+})
+
+local ESPToggle = VisualsTab:CreateToggle({
+    Name = "Generator ESP",
+    CurrentValue = false,
+    Flag = "GenESPToggle",
+    Callback = function(state)
+        MapWait()
+        ToggleGenEsp(state)
+    end,
 })
 
 local SESection = VisualsTab:CreateSection("Status Effects")
